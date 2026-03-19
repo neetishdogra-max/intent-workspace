@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, Pencil, ChevronDown, ChevronUp } from 'lucide-react';
+import { Eye, Pencil, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MainPromptModal } from './MainPromptModal';
@@ -13,34 +13,30 @@ export function MainPromptCard({ prompt, onUpdate }: MainPromptCardProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const truncated = prompt.slice(0, 180) + (prompt.length > 180 ? '…' : '');
+  const truncated = prompt.slice(0, 140) + (prompt.length > 140 ? '…' : '');
 
   return (
     <>
-      <div className="mx-6 mt-5 rounded-lg border border-border bg-card p-5">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold text-foreground">Main Prompt</h3>
-            <p className="mt-1.5 font-mono text-xs leading-relaxed text-muted-foreground">
+      <div className="rounded-lg border border-border bg-card p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Main Prompt</h3>
+            <p className="mt-1 font-mono text-xs leading-relaxed text-foreground/70 truncate">
               {truncated}
             </p>
           </div>
-          <div className="ml-4 flex items-center gap-2">
+          <div className="flex items-center gap-1 shrink-0">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsPreviewOpen(!isPreviewOpen)}
-              className="text-muted-foreground"
+              className="h-7 px-2 text-xs text-muted-foreground"
             >
-              {isPreviewOpen ? (
-                <ChevronUp className="mr-1 h-3.5 w-3.5" />
-              ) : (
-                <Eye className="mr-1 h-3.5 w-3.5" />
-              )}
+              {isPreviewOpen ? <ChevronUp className="mr-1 h-3 w-3" /> : <Eye className="mr-1 h-3 w-3" />}
               {isPreviewOpen ? 'Collapse' : 'Preview'}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => setIsEditOpen(true)} className="text-muted-foreground">
-              <Pencil className="mr-1 h-3.5 w-3.5" />
+            <Button variant="ghost" size="sm" onClick={() => setIsEditOpen(true)} className="h-7 px-2 text-xs text-muted-foreground">
+              <Pencil className="mr-1 h-3 w-3" />
               Edit
             </Button>
           </div>
@@ -55,7 +51,7 @@ export function MainPromptCard({ prompt, onUpdate }: MainPromptCardProps) {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="mt-4 rounded-md border border-border bg-code-bg p-4">
+              <div className="mt-3 rounded-md border border-border bg-muted/50 p-3">
                 <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-foreground/80">
                   {prompt}
                 </pre>
