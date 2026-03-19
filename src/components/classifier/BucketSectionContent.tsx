@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { X, Plus, Pencil, Eye } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { X, Plus, Eye } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import type { IntentBucket, BucketSection } from '@/types/classifier';
 import { PromptEditorModal } from './PromptEditorModal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface Props {
   section: BucketSection;
@@ -21,9 +28,9 @@ export function BucketSectionContent({ section, bucket, onUpdate }: Props) {
     case 'signals':
       return <SignalsSection bucket={bucket} onUpdate={onUpdate} />;
     case 'rag':
-      return <PromptSection label="RAG Response" sublabel="Prompt template for RAG-based responses." value={bucket.ragResponse} onChange={(v) => onUpdate({ ...bucket, ragResponse: v })} />;
+      return <PromptSection label="RAG Response" value={bucket.ragResponse} onChange={(v) => onUpdate({ ...bucket, ragResponse: v })} />;
     case 'followup':
-      return <PromptSection label="Follow-up Questions" sublabel="Rules and templates for follow-up questions." value={bucket.followUpQuestions} onChange={(v) => onUpdate({ ...bucket, followUpQuestions: v })} />;
+      return <PromptSection label="Follow-up Questions" value={bucket.followUpQuestions} onChange={(v) => onUpdate({ ...bucket, followUpQuestions: v })} />;
     default:
       return null;
   }
@@ -31,7 +38,7 @@ export function BucketSectionContent({ section, bucket, onUpdate }: Props) {
 
 function DefinitionSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div>
         <h4 className="text-xs font-medium text-foreground">Description</h4>
         <p className="text-[11px] text-muted-foreground mb-2">Describe when queries should be routed to this bucket.</p>
@@ -39,7 +46,7 @@ function DefinitionSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdat
       <Textarea
         value={bucket.description}
         onChange={(e) => onUpdate({ ...bucket, description: e.target.value })}
-        rows={6}
+        rows={8}
         placeholder="Describe this intent bucket…"
         className="resize-none text-sm leading-relaxed"
       />
@@ -48,12 +55,14 @@ function DefinitionSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdat
 }
 
 function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [newExample, setNewExample] = useState('');
 
   const addExample = () => {
     if (newExample.trim()) {
       onUpdate({ ...bucket, examples: [...bucket.examples, newExample.trim()] });
       setNewExample('');
+      setDialogOpen(false);
     }
   };
 
@@ -68,19 +77,10 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
           <h4 className="text-xs font-medium text-foreground">Example Queries</h4>
           <p className="text-[11px] text-muted-foreground">Queries that represent this intent.</p>
         </div>
-        <div className="flex gap-1.5">
-          <Input
-            value={newExample}
-            onChange={(e) => setNewExample(e.target.value)}
-            placeholder="Type an example…"
-            className="font-mono text-xs h-7 w-56"
-            onKeyDown={(e) => e.key === 'Enter' && addExample()}
-          />
-          <Button variant="outline" size="sm" onClick={addExample} className="h-7 shrink-0 text-xs px-2.5">
-            <Plus className="mr-1 h-3 w-3" />
-            Add
-          </Button>
-        </div>
+        <Button size="sm" onClick={() => setDialogOpen(true)} className="h-7 text-xs px-3">
+          <Plus className="mr-1 h-3 w-3" />
+          Add
+        </Button>
       </div>
 
       <div className="space-y-1">
@@ -97,17 +97,39 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
           <p className="text-xs text-muted-foreground italic py-3">No examples added yet.</p>
         )}
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Add Example Query</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newExample}
+            onChange={(e) => setNewExample(e.target.value)}
+            placeholder="Type an example query…"
+            className="font-mono text-sm"
+            onKeyDown={(e) => e.key === 'Enter' && addExample()}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button size="sm" onClick={addExample}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [newSignal, setNewSignal] = useState('');
 
   const addSignal = () => {
     if (newSignal.trim() && !bucket.signals.includes(newSignal.trim())) {
       onUpdate({ ...bucket, signals: [...bucket.signals, newSignal.trim()] });
       setNewSignal('');
+      setDialogOpen(false);
     }
   };
 
@@ -122,19 +144,10 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
           <h4 className="text-xs font-medium text-foreground">Signal Words / Keywords</h4>
           <p className="text-[11px] text-muted-foreground">Keywords that indicate this intent.</p>
         </div>
-        <div className="flex gap-1.5">
-          <Input
-            value={newSignal}
-            onChange={(e) => setNewSignal(e.target.value)}
-            placeholder="Add keyword…"
-            className="text-xs h-7 w-40"
-            onKeyDown={(e) => e.key === 'Enter' && addSignal()}
-          />
-          <Button variant="outline" size="sm" onClick={addSignal} className="h-7 shrink-0 text-xs px-2.5">
-            <Plus className="mr-1 h-3 w-3" />
-            Add
-          </Button>
-        </div>
+        <Button size="sm" onClick={() => setDialogOpen(true)} className="h-7 text-xs px-3">
+          <Plus className="mr-1 h-3 w-3" />
+          Add
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
@@ -150,58 +163,67 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
           <p className="text-xs text-muted-foreground italic py-3">No signal words added yet.</p>
         )}
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Add Signal Word</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={newSignal}
+            onChange={(e) => setNewSignal(e.target.value)}
+            placeholder="Type a keyword…"
+            className="text-sm"
+            onKeyDown={(e) => e.key === 'Enter' && addSignal()}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button size="sm" onClick={addSignal}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 function PromptSection({
   label,
-  sublabel,
   value,
   onChange,
 }: {
   label: string;
-  sublabel: string;
   value: string;
   onChange: (v: string) => void;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-xs font-medium text-foreground">{label}</h4>
-          <p className="text-[11px] text-muted-foreground">{sublabel}</p>
         </div>
-        <div className="flex gap-1.5">
-          <Button variant="ghost" size="sm" className="h-7 text-xs px-2.5 text-muted-foreground" onClick={() => setPreviewOpen(!previewOpen)}>
-            <Eye className="mr-1 h-3 w-3" />
-            {previewOpen ? 'Hide' : 'Preview'}
-          </Button>
-          <Button variant="outline" size="sm" className="h-7 text-xs px-2.5" onClick={() => setModalOpen(true)}>
-            <Pencil className="mr-1 h-3 w-3" />
-            Edit
-          </Button>
-        </div>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+          title="Open in editor"
+        >
+          <Eye className="h-3.5 w-3.5" />
+        </button>
       </div>
 
-      {previewOpen && value && (
-        <div className="rounded-md border border-border/60 bg-muted/20 p-3">
-          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-foreground/80">{value}</pre>
-        </div>
-      )}
-
-      {!previewOpen && (
-        <div className="rounded-md border border-border/60 bg-muted/20 px-3 py-2">
-          <p className="text-xs text-muted-foreground line-clamp-2 font-mono">{value || 'No content yet. Click Edit to add.'}</p>
-        </div>
-      )}
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={10}
+        placeholder={`Enter ${label.toLowerCase()}…`}
+        className="resize-none font-mono text-xs leading-relaxed"
+      />
 
       <PromptEditorModal
         isOpen={modalOpen}
-        title={`Edit ${label}`}
+        title="Edit"
         value={value}
         onSave={(v) => { onChange(v); setModalOpen(false); }}
         onClose={() => setModalOpen(false)}
