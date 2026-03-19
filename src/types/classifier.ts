@@ -3,6 +3,7 @@ export interface IntentBucket {
   name: string;
   description: string;
   confidenceThreshold: number;
+  temperature: number;
   status: 'active' | 'draft' | 'disabled';
   examples: string[];
   signals: string[];
