@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Copy, Trash2, Save } from 'lucide-react';
+import { Plus, Copy, Trash2, Save, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
