@@ -6,18 +6,16 @@ export interface IntentBucket {
   status: 'active' | 'draft' | 'disabled';
   examples: string[];
   signals: string[];
-  additionalContext: string;
   ragResponse: string;
   followUpQuestions: string;
 }
 
-export type BucketSection = 'definition' | 'examples' | 'signals' | 'context' | 'rag' | 'followup';
+export type BucketSection = 'definition' | 'examples' | 'signals' | 'rag' | 'followup';
 
 export const BUCKET_SECTIONS: { key: BucketSection; label: string }[] = [
   { key: 'definition', label: 'Definition' },
   { key: 'examples', label: 'Examples' },
-  { key: 'signals', label: 'Signals' },
-  { key: 'context', label: 'Additional Context' },
+  { key: 'signals', label: 'Signal Words' },
   { key: 'rag', label: 'RAG Response' },
   { key: 'followup', label: 'Follow-up Questions' },
 ];
@@ -36,7 +34,6 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
       'Why was I charged twice?',
     ],
     signals: ['pricing', 'billing', 'invoice', 'upgrade', 'payment', 'credit card', 'subscription'],
-    additionalContext: 'Route billing queries to the finance support team. Ensure PCI compliance language is maintained in all responses. Escalate refund requests over $500 to a human agent.',
     ragResponse: 'You are a billing support specialist. When responding to billing queries:\n1. Always verify the customer\'s account status first\n2. Provide specific pricing details when available\n3. Link to the billing portal for self-service actions\n4. Escalate complex refund cases to human agents',
     followUpQuestions: 'After resolving a billing query, ask:\n- "Is there anything else regarding your account I can help with?"\n- "Would you like me to set up automatic payment reminders?"',
   },
@@ -52,7 +49,6 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
       'How do I reset my API key?',
     ],
     signals: ['error', 'bug', 'API', 'crash', 'broken', 'not working', 'debug'],
-    additionalContext: 'Check system status page before responding. If there is a known outage, lead with that information.',
     ragResponse: 'You are a technical support agent. Prioritize:\n1. Identifying the error type and scope\n2. Checking for known issues\n3. Providing step-by-step troubleshooting\n4. Collecting diagnostic information if escalation is needed',
     followUpQuestions: 'After troubleshooting:\n- "Has this resolved your issue?"\n- "Would you like me to create a support ticket for further investigation?"',
   },
@@ -68,7 +64,6 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
       'How do I enable two-factor authentication?',
     ],
     signals: ['account', 'profile', 'settings', 'password', 'team', '2FA', 'permissions'],
-    additionalContext: 'Always verify identity before making account changes. Direct users to security settings for sensitive operations.',
     ragResponse: 'You are an account management specialist. Follow these guidelines:\n1. Verify user identity through established protocols\n2. Guide users through self-service options first\n3. Document all account changes made',
     followUpQuestions: 'After account changes:\n- "Would you like to review your security settings?"\n- "Is there anything else about your account you\'d like to update?"',
   },
@@ -84,7 +79,6 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
       'Is there a quickstart guide?',
     ],
     signals: ['getting started', 'setup', 'onboarding', 'new', 'first time', 'tutorial', 'guide'],
-    additionalContext: 'Prioritize linking to interactive tutorials and video walkthroughs. Track onboarding completion milestones.',
     ragResponse: 'You are an onboarding specialist. Your goal is to:\n1. Assess the user\'s experience level\n2. Provide a personalized onboarding path\n3. Highlight key features relevant to their use case',
     followUpQuestions: 'During onboarding:\n- "What is your primary use case?"\n- "Would you like a guided tour of the dashboard?"',
   },

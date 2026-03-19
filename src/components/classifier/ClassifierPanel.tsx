@@ -62,6 +62,7 @@ export function ClassifierPanel({ isOpen, onClose }: ClassifierPanelProps) {
   const handleSaveBucket = (id: string) => {
     const bucket = buckets.find((b) => b.id === id);
     if (bucket) {
+      handleUpdate({ ...bucket, status: 'active' });
       toast.success(`"${bucket.name}" saved`);
     }
   };
