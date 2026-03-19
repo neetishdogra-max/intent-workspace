@@ -1,7 +1,8 @@
 import { useState, KeyboardEvent } from 'react';
-import { X, Eye } from 'lucide-react';
+import { X, Eye, Plus } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import type { IntentBucket, BucketSection } from '@/types/classifier';
 import { PromptEditorModal } from './PromptEditorModal';
 
@@ -47,6 +48,7 @@ function DefinitionSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdat
 }
 
 function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
+  const [isAdding, setIsAdding] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const addExample = () => {
@@ -62,6 +64,10 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
       e.preventDefault();
       addExample();
     }
+    if (e.key === 'Escape') {
+      setIsAdding(false);
+      setInputValue('');
+    }
   };
 
   const removeExample = (index: number) => {
@@ -70,10 +76,36 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
 
   return (
     <div className="space-y-3">
-      <div>
-        <h4 className="text-xs font-medium text-foreground">Example Queries</h4>
-        <p className="text-[11px] text-muted-foreground">Queries that represent this intent.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-xs font-medium text-foreground">Example Queries</h4>
+          <p className="text-[11px] text-muted-foreground">Queries that represent this intent.</p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setIsAdding(true)}
+          className="h-6 text-[11px] px-2.5"
+        >
+          <Plus className="mr-1 h-3 w-3" />
+          Add
+        </Button>
       </div>
+
+      {isAdding && (
+        <Input
+          autoFocus
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={() => {
+            if (inputValue.trim()) addExample();
+            setIsAdding(false);
+            setInputValue('');
+          }}
+          placeholder="Type an example query and press Enter…"
+          className="font-mono text-xs h-8"
+        />
+      )}
 
       <div className="space-y-1">
         {bucket.examples.map((ex, i) => (
@@ -86,19 +118,12 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
           </div>
         ))}
       </div>
-
-      <Input
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Type an example query and press Enter…"
-        className="font-mono text-xs h-8"
-      />
     </div>
   );
 }
 
 function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
+  const [isAdding, setIsAdding] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const addSignal = () => {
@@ -114,6 +139,10 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
       e.preventDefault();
       addSignal();
     }
+    if (e.key === 'Escape') {
+      setIsAdding(false);
+      setInputValue('');
+    }
   };
 
   const removeSignal = (index: number) => {
@@ -122,10 +151,36 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
 
   return (
     <div className="space-y-3">
-      <div>
-        <h4 className="text-xs font-medium text-foreground">Signal Words / Keywords</h4>
-        <p className="text-[11px] text-muted-foreground">Keywords that indicate this intent.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-xs font-medium text-foreground">Signal Words / Keywords</h4>
+          <p className="text-[11px] text-muted-foreground">Keywords that indicate this intent.</p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => setIsAdding(true)}
+          className="h-6 text-[11px] px-2.5"
+        >
+          <Plus className="mr-1 h-3 w-3" />
+          Add
+        </Button>
       </div>
+
+      {isAdding && (
+        <Input
+          autoFocus
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={() => {
+            if (inputValue.trim()) addSignal();
+            setIsAdding(false);
+            setInputValue('');
+          }}
+          placeholder="Type a keyword and press Enter…"
+          className="text-xs h-8"
+        />
+      )}
 
       <div className="flex flex-wrap gap-1.5">
         {bucket.signals.map((signal, i) => (
@@ -137,14 +192,6 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
           </span>
         ))}
       </div>
-
-      <Input
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Type a keyword and press Enter…"
-        className="text-xs h-8"
-      />
     </div>
   );
 }
