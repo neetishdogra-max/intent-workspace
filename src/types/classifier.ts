@@ -61,6 +61,7 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     description: 'Queries about account settings, profile updates, and access control.',
     confidenceThreshold: 8,
     temperature: 0.5,
+    status: 'draft',
     examples: [
       'How do I change my email address?',
       'I want to add a team member',
