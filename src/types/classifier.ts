@@ -3,6 +3,7 @@ export interface IntentBucket {
   name: string;
   description: string;
   confidenceThreshold: number;
+  temperature: number;
   status: 'active' | 'draft' | 'disabled';
   examples: string[];
   signals: string[];
@@ -25,7 +26,8 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     id: '1',
     name: 'Billing & Payments',
     description: 'Queries related to invoices, subscriptions, payment methods, and pricing changes.',
-    confidenceThreshold: 85,
+    confidenceThreshold: 8,
+    temperature: 0.4,
     status: 'active',
     examples: [
       'How do I upgrade my subscription?',
@@ -41,7 +43,8 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     id: '2',
     name: 'Technical Support',
     description: 'Queries about bugs, errors, API issues, and technical troubleshooting.',
-    confidenceThreshold: 78,
+    confidenceThreshold: 7,
+    temperature: 0.3,
     status: 'active',
     examples: [
       'My API calls are returning 500 errors',
@@ -56,7 +59,8 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     id: '3',
     name: 'Account Management',
     description: 'Queries about account settings, profile updates, and access control.',
-    confidenceThreshold: 80,
+    confidenceThreshold: 8,
+    temperature: 0.5,
     status: 'draft',
     examples: [
       'How do I change my email address?',
@@ -71,7 +75,8 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     id: '4',
     name: 'Product Onboarding',
     description: 'Queries from new users about getting started, setup, and initial configuration.',
-    confidenceThreshold: 72,
+    confidenceThreshold: 7,
+    temperature: 0.6,
     status: 'active',
     examples: [
       'How do I get started?',

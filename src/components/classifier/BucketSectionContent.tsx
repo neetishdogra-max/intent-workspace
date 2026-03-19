@@ -1,17 +1,9 @@
-import { useState } from 'react';
-import { X, Plus, Eye } from 'lucide-react';
+import { useState, KeyboardEvent } from 'react';
+import { X, Eye } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { IntentBucket, BucketSection } from '@/types/classifier';
 import { PromptEditorModal } from './PromptEditorModal';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 
 interface Props {
   section: BucketSection;
@@ -55,14 +47,20 @@ function DefinitionSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdat
 }
 
 function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [newExample, setNewExample] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const addExample = () => {
-    if (newExample.trim()) {
-      onUpdate({ ...bucket, examples: [...bucket.examples, newExample.trim()] });
-      setNewExample('');
-      setDialogOpen(false);
+    const v = inputValue.trim();
+    if (v) {
+      onUpdate({ ...bucket, examples: [...bucket.examples, v] });
+      setInputValue('');
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addExample();
     }
   };
 
@@ -72,15 +70,9 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <h4 className="text-xs font-medium text-foreground">Example Queries</h4>
-          <p className="text-[11px] text-muted-foreground">Queries that represent this intent.</p>
-        </div>
-        <Button size="sm" onClick={() => setDialogOpen(true)} className="h-7 text-xs px-3">
-          <Plus className="mr-1 h-3 w-3" />
-          Add
-        </Button>
+      <div>
+        <h4 className="text-xs font-medium text-foreground">Example Queries</h4>
+        <p className="text-[11px] text-muted-foreground">Queries that represent this intent.</p>
       </div>
 
       <div className="space-y-1">
@@ -93,43 +85,34 @@ function ExamplesSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate:
             </button>
           </div>
         ))}
-        {bucket.examples.length === 0 && (
-          <p className="text-xs text-muted-foreground italic py-3">No examples added yet.</p>
-        )}
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-sm">Add Example Query</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={newExample}
-            onChange={(e) => setNewExample(e.target.value)}
-            placeholder="Type an example query…"
-            className="font-mono text-sm"
-            onKeyDown={(e) => e.key === 'Enter' && addExample()}
-            autoFocus
-          />
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={addExample}>Add</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Type an example query and press Enter…"
+        className="font-mono text-xs h-8"
+      />
     </div>
   );
 }
 
 function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: (b: IntentBucket) => void }) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [newSignal, setNewSignal] = useState('');
+  const [inputValue, setInputValue] = useState('');
 
   const addSignal = () => {
-    if (newSignal.trim() && !bucket.signals.includes(newSignal.trim())) {
-      onUpdate({ ...bucket, signals: [...bucket.signals, newSignal.trim()] });
-      setNewSignal('');
-      setDialogOpen(false);
+    const v = inputValue.trim();
+    if (v && !bucket.signals.includes(v)) {
+      onUpdate({ ...bucket, signals: [...bucket.signals, v] });
+      setInputValue('');
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addSignal();
     }
   };
 
@@ -139,15 +122,9 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <h4 className="text-xs font-medium text-foreground">Signal Words / Keywords</h4>
-          <p className="text-[11px] text-muted-foreground">Keywords that indicate this intent.</p>
-        </div>
-        <Button size="sm" onClick={() => setDialogOpen(true)} className="h-7 text-xs px-3">
-          <Plus className="mr-1 h-3 w-3" />
-          Add
-        </Button>
+      <div>
+        <h4 className="text-xs font-medium text-foreground">Signal Words / Keywords</h4>
+        <p className="text-[11px] text-muted-foreground">Keywords that indicate this intent.</p>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
@@ -159,30 +136,15 @@ function SignalsSection({ bucket, onUpdate }: { bucket: IntentBucket; onUpdate: 
             </button>
           </span>
         ))}
-        {bucket.signals.length === 0 && (
-          <p className="text-xs text-muted-foreground italic py-3">No signal words added yet.</p>
-        )}
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-sm">Add Signal Word</DialogTitle>
-          </DialogHeader>
-          <Input
-            value={newSignal}
-            onChange={(e) => setNewSignal(e.target.value)}
-            placeholder="Type a keyword…"
-            className="text-sm"
-            onKeyDown={(e) => e.key === 'Enter' && addSignal()}
-            autoFocus
-          />
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={addSignal}>Add</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Type a keyword and press Enter…"
+        className="text-xs h-8"
+      />
     </div>
   );
 }

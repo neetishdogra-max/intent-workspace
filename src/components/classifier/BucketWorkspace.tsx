@@ -45,8 +45,8 @@ export function BucketWorkspace({
           </Button>
         </div>
 
-        {/* Horizontal capsule tabs */}
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+        {/* Wrapping capsule tabs */}
+        <div className="flex flex-wrap gap-1.5">
           {buckets.map((bucket) => (
             <button
               key={bucket.id}
@@ -67,31 +67,53 @@ export function BucketWorkspace({
       {/* Bucket content area */}
       {selectedBucket ? (
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Compact bucket header — single row */}
-          <div className="shrink-0 border-b border-border px-4 py-1.5 flex items-center justify-between gap-3 bg-muted/20">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-sm font-semibold text-foreground truncate">{selectedBucket.name}</span>
+          {/* Compact bucket header */}
+          <div className="shrink-0 border-b border-border px-4 py-1.5 flex items-center justify-between gap-2 bg-muted/20">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <Input
+                value={selectedBucket.name}
+                onChange={(e) => onUpdate({ ...selectedBucket, name: e.target.value })}
+                className="h-6 text-sm font-semibold border-border/50 bg-transparent px-1.5 w-40 focus-visible:ring-1"
+              />
               <Badge
                 variant={selectedBucket.status === 'active' ? 'default' : 'secondary'}
                 className={cn(
-                  'text-[10px] capitalize h-[18px] px-1.5 leading-none',
+                  'text-[10px] capitalize h-[18px] px-1.5 leading-none shrink-0',
                   selectedBucket.status === 'active' && 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100',
                   selectedBucket.status === 'draft' && 'bg-amber-100 text-amber-700 hover:bg-amber-100'
                 )}
               >
                 {selectedBucket.status}
               </Badge>
-              <span className="text-[10px] text-muted-foreground ml-1">Threshold</span>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                value={selectedBucket.confidenceThreshold}
-                onChange={(e) => onUpdate({ ...selectedBucket, confidenceThreshold: Number(e.target.value) })}
-                className="h-5 w-12 text-center text-[11px] font-mono px-1"
-              />
-              <span className="text-[10px] text-muted-foreground">%</span>
+
+              <div className="flex items-center gap-1 shrink-0 ml-2">
+                <span className="text-[10px] text-muted-foreground">Confidence</span>
+                <Input
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={1}
+                  value={selectedBucket.confidenceThreshold}
+                  onChange={(e) => onUpdate({ ...selectedBucket, confidenceThreshold: Number(e.target.value) })}
+                  className="h-5 w-10 text-center text-[11px] font-mono px-1"
+                />
+                <span className="text-[10px] text-muted-foreground">/10</span>
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0 ml-2">
+                <span className="text-[10px] text-muted-foreground">Temp</span>
+                <Input
+                  type="number"
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  value={selectedBucket.temperature}
+                  onChange={(e) => onUpdate({ ...selectedBucket, temperature: Number(e.target.value) })}
+                  className="h-5 w-12 text-center text-[11px] font-mono px-1"
+                />
+              </div>
             </div>
+
             <div className="flex items-center gap-0.5 shrink-0">
               <Button variant="ghost" size="sm" className="h-6 px-2 text-[11px] text-muted-foreground" onClick={() => onDuplicate(selectedBucket.id)}>
                 <Copy className="mr-1 h-3 w-3" />
