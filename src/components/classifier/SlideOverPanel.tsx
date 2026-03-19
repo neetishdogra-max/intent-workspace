@@ -25,7 +25,7 @@ export function SlideOverPanel({ isOpen, onClose, children }: SlideOverPanelProp
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-0 top-0 z-50 flex h-screen w-[75vw] flex-col border-l border-border bg-background shadow-[-8px_0_24px_rgba(0,0,0,0.04)]"
+            className="fixed right-0 top-0 z-50 flex h-screen w-full sm:w-[85vw] md:w-[75vw] lg:w-[65vw] flex-col border-l border-border bg-background shadow-[-8px_0_24px_rgba(0,0,0,0.04)]"
           >
             {/* Compact Header */}
             <div className="flex h-12 shrink-0 items-center justify-between border-b border-border bg-card px-5">
