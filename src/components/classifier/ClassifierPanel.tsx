@@ -29,7 +29,7 @@ export function ClassifierPanel({ isOpen, onClose }: ClassifierPanelProps) {
       status: 'draft',
       examples: [],
       signals: [],
-      additionalContext: '',
+      
       ragResponse: '',
       followUpQuestions: '',
     };
