@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Copy, Trash2, Save } from 'lucide-react';
+import { Plus, Copy, Trash2, Save, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -81,11 +81,14 @@ export function BucketWorkspace({
           {/* Compact bucket header */}
           <div className="shrink-0 border-b border-border px-3 sm:px-4 py-1.5 bg-muted/20">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              <Input
-                value={selectedBucket.name}
-                onChange={(e) => onUpdate({ ...selectedBucket, name: e.target.value })}
-                className="h-6 text-sm font-semibold border-border/50 bg-transparent px-1.5 w-32 sm:w-40 focus-visible:ring-1"
-              />
+              <div className="relative group">
+                <Input
+                  value={selectedBucket.name}
+                  onChange={(e) => onUpdate({ ...selectedBucket, name: e.target.value })}
+                  className="h-7 text-sm font-semibold border-border bg-muted/30 pl-2 pr-7 w-36 sm:w-44 rounded-md transition-colors hover:bg-muted/50 hover:border-primary/40 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary focus-visible:bg-background"
+                />
+                <Pencil className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground pointer-events-none group-hover:text-primary transition-colors" />
+              </div>
               <Badge
                 variant={selectedBucket.status === 'active' ? 'default' : 'secondary'}
                 className={cn(
