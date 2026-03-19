@@ -28,6 +28,7 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     description: 'Queries related to invoices, subscriptions, payment methods, and pricing changes.',
     confidenceThreshold: 8,
     temperature: 0.4,
+    status: 'active',
     examples: [
       'How do I upgrade my subscription?',
       'Can I pay with PayPal?',
