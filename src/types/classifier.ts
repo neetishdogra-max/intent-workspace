@@ -77,6 +77,7 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     description: 'Queries from new users about getting started, setup, and initial configuration.',
     confidenceThreshold: 7,
     temperature: 0.6,
+    status: 'active',
     examples: [
       'How do I get started?',
       'What should I set up first?',
