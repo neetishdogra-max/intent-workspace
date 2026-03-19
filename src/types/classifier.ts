@@ -45,6 +45,7 @@ export const SAMPLE_BUCKETS: IntentBucket[] = [
     description: 'Queries about bugs, errors, API issues, and technical troubleshooting.',
     confidenceThreshold: 7,
     temperature: 0.3,
+    status: 'active',
     examples: [
       'My API calls are returning 500 errors',
       'The dashboard won\'t load',
